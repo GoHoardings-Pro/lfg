@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { LinkedIn } from "react-linkedin-oauth2";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends Component {
+  state = {
+    code: "",
+    errorMessage: ""
+  };
+
+  handleSuccess = (data) => {
+    console.log(data);
+    this.setState({
+      code: data.code,
+      
+      errorMessage: ""
+    });
+  };
+
+  handleFailure = (error) => {
+    this.setState({
+      code: "",
+      errorMessage: error.errorMessage
+    });
+  };
+
+  render() {
+    const { code, errorMessage } = this.state;
+    return (
+      <div>
+        <LinkedIn
+          clientId="86pd3xemm2f2qa"
+          onFailure={this.handleFailure}
+          onSuccess={this.handleSuccess}
+          redirectUri="https://www.linkedin.com/signup"
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <img alt="Log in with Linked In" style={{ maxWidth: "180px" }} />
+        </LinkedIn>
+        {!code && <div>No code</div>}
+        {code && <div>Code: {code}</div>}
+        {errorMessage && <div>{errorMessage}</div>}
+      </div>
+    );
+  }
 }
+
+
 
 export default App;
